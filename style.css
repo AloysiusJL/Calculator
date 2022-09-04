@@ -2,8 +2,26 @@
     display: grid;
 }
 
+.hide{
+    scale: 0;
+}
+
+.screen{
+    margin: auto;
+    height: 80px;
+    width: 200px;
+}
+
 .pad{
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(5, 1fr);
+    width: 200px;
+    height: 300px;
+    margin: auto;
+}
+
+#numPad0{
+    grid-column-start: 1;
+    grid-column-end: 3;
 }
