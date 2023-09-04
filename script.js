@@ -1,233 +1,100 @@
-let number1 = 0
-let number2 = 0
-let result = 0
-sign = ''
+let input = ''; // User input string
+let result = null; // Result of the calculation
+let lastOperator = null; // Last operator clicked
+let lastClicked = null; // ID of the last clicked button
 
-const screen1 = document.getElementById('screen1')
-const screen2 = document.getElementById('screen2')
-const shadow1 = document.getElementById('shadow1')
-const shadow2 = document.getElementById('shadow2')
+const screen1 = document.getElementById('result');
+const screen2 = document.getElementById('input');
 
-const clear = document.getElementById('clear');
-const del = document.getElementById('delete');
-const divide = document.getElementById('divide');
-const equal = document.getElementById('equal');
-const persentage = document.getElementById('persentage');
-const float = document.getElementById('float');
-const subtract = document.getElementById('subtract');
-const nimPlus = document.getElementById('nimPlus');
-const multiply = document.getElementById('multiply');
-const add = document.getElementById('add');
+const buttons = document.querySelectorAll('button');
 
-const numPad0 = document.getElementById('numPad0');
-const numPad1 = document.getElementById('numPad1');
-const numPad2 = document.getElementById('numPad2');
-const numPad3 = document.getElementById('numPad3');
-const numPad4 = document.getElementById('numPad4');
-const numPad5 = document.getElementById('numPad5');
-const numPad6 = document.getElementById('numPad6');
-const numPad7 = document.getElementById('numPad7');
-const numPad8 = document.getElementById('numPad8');
-const numPad9 = document.getElementById('numPad9');
+// Add event listener to all buttons
+buttons.forEach(button => {
+    button.addEventListener('click', function () {
+        const value = button.textContent;
+        lastClicked = button.id;
 
-//logic for calculation
-function calAdd(num1, num2){result = num1 + num2}
-function calSubtract(num1, num2){result = num1 - num2}
-function calMultiply(num1, num2){result = number1 * number2}
-function calDivide(num1, num2){result = num1 / num2}
+        if (value.match(/[0-9]/)) {
+            // Number button clicked
+            input += value;
+            updateScreen();
+        } else if (value === '.') {
+            // Decimal point button clicked
+            if (!input.includes('.') && !input.endsWith('.')) {
+                input += value;
+                updateScreen();
+            }
+        } else if (value === '=') {
+            // Equal button clicked
+            calculate();
+        } else if (value === 'C') {
+            // Clear button clicked
+            clear();
+        } else if (value === 'CE') {
+            // Clear Entry button clicked
+            clearEntry();
+        } else if (value === 'Delete') {
+            // Delete button clicked
+            deleteLastCharacter();
+        } else if (value === '%' && input) {
+            // Percentage button clicked
+            input = String(parseFloat(input) / 100);
+            updateScreen();
+        } else if (value === '+/-' && input && input.length > 0 && !isNaN(input)) {
+            // Toggle Sign button clicked only if there's input
+            input = String(-parseFloat(input));
+            updateScreen();
+        } else if (value.match(/[\+\-\*\/]/)) {
+            // Operator button clicked
+            if (lastOperator && lastClicked !== 'equal' && input.trim().endsWith(lastOperator)) {
+                // Replace the previous operator with the new one
+                input = input.trim().slice(0, -1) + value + ' ';
+            } else {
+                input += ' ' + value + ' ';
+            }
+            lastOperator = value;
+            updateScreen();
+        }
+    });
+});
 
-function operate(operator){
-    switch(operator){
-        case('+'): return calAdd(number1, number2)
-        case('-'): return calSubtract(number1, number2)
-        case('*'): return calMultiply(number1, number2)
-        case('/'): return calDivide(number1, number2)
-    }
+function updateScreen() {
+    screen2.textContent = input;
 }
 
-//numpad print number to screen    
-numPad0.addEventListener('click', function(){
-    if (sign !== ''){
-        screen1.append(numPad0.innerText)
-        shadow2.append(numPad0.innerText)
-        number2 = Number(shadow2.innerText)    
-        operate(sign)
+function clear() {
+    input = '';
+    result = null;
+    lastOperator = null;
+    updateScreen();
+    screen1.textContent = '';
+}
+
+function clearEntry() {
+    input = '';
+    updateScreen();
+}
+
+function deleteLastCharacter() {
+    input = input.slice(0, -1);
+    updateScreen();
+}
+
+function calculate() {
+    try {
+        result = eval(input);
+        if (!isNaN(result)) {
+            input = String(result);
+            updateScreen();
+            screen1.textContent = '';
+        } else {
+            input = 'Error';
+            updateScreen();
+            clear();
+        }
+    } catch (error) {
+        input = 'Error';
+        updateScreen();
+        clear();
     }
-    else if (sign === ''){
-    screen1.append(numPad0.innerText)
-    shadow1.append(numPad0.innerText)
-    number1 = Number(shadow1.innerText)
-}})
-numPad1.addEventListener('click', function(){
-    if (sign !== ''){
-        screen1.append(numPad1.innerText)
-        shadow2.append(numPad1.innerText)
-        number2 = Number(shadow2.innerText)    
-        operate(sign)    
-    }
-    else if (sign === ''){
-    screen1.append(numPad1.innerText)
-    shadow1.append(numPad1.innerText)
-    number1 = Number(shadow1.innerText)
-}})
-
-numPad2.addEventListener('click', function(){
-    if (sign !== ''){
-        screen1.append(numPad2.innerText)
-        shadow2.append(numPad2.innerText)
-        number2 = Number(shadow2.innerText)    
-        operate(sign)    
-    }
-    else if (sign === ''){
-    screen1.append(numPad2.innerText)
-    shadow1.append(numPad2.innerText)
-    number1 = Number(shadow1.innerText)
-}})
-
-numPad3.addEventListener('click', function(){
-    if (sign !== ''){
-        screen1.append(numPad3.innerText)
-        shadow2.append(numPad3.innerText)
-        number2 = Number(shadow2.innerText)    
-        operate(sign)    
-    }
-    else if (sign === ''){
-    screen1.append(numPad3.innerText)
-    shadow1.append(numPad3.innerText)
-    number1 = Number(shadow1.innerText)
-
-}})
-
-numPad4.addEventListener('click', function(){
-    if (sign !== ''){
-        screen1.append(numPad4.innerText)
-        shadow2.append(numPad4.innerText)
-        number2 = Number(shadow2.innerText)    
-        operate(sign)    
-    }
-    else if (sign === ''){
-    screen1.append(numPad4.innerText)
-    shadow1.append(numPad4.innerText)
-    number1 = Number(shadow1.innerText)
-}})
-
-numPad5.addEventListener('click', function(){
-    if (sign !== ''){
-        screen1.append(numPad5.innerText)
-        shadow2.append(numPad5.innerText)
-        number2 = Number(shadow2.innerText)    
-        operate(sign)    
-    }
-    else if (sign === ''){
-    screen1.append(numPad5.innerText)
-    shadow1.append(numPad5.innerText)
-    number1 = Number(shadow1.innerText)
-}})
-
-numPad6.addEventListener('click', function(){
-    if (sign !== ''){
-        screen1.append(numPad6.innerText)
-        shadow2.append(numPad6.innerText)
-        number2 = Number(shadow2.innerText)    
-        operate(sign)    
-    }
-    else if (sign === ''){
-    screen1.append(numPad6.innerText)
-    shadow1.append(numPad6.innerText)
-    number1 = Number(shadow1.innerText)
-}})
-
-numPad7.addEventListener('click', function(){
-    if (sign !== ''){
-        screen1.append(numPad7.innerText)
-        shadow2.append(numPad7.innerText)
-        number2 = Number(shadow2.innerText)    
-        operate(sign)    
-    }
-    else if (sign === ''){
-    screen1.append(numPad7.innerText)
-    shadow1.append(numPad7.innerText)
-    number1 = Number(shadow1.innerText)
-}})
-
-numPad8.addEventListener('click', function(){
-    if (sign !== ''){
-        screen1.append(numPad8.innerText)
-        shadow2.append(numPad8.innerText)
-        number2 = Number(shadow2.innerText)    
-        operate(sign)    
-    }
-    else if (sign === ''){
-    screen1.append(numPad8.innerText)
-    shadow1.append(numPad8.innerText)
-    number1 = Number(shadow1.innerText)
-}})
-
-numPad9.addEventListener('click', function(){
-    if (sign !== ''){
-        screen1.append(numPad9.innerText)
-        shadow2.append(numPad9.innerText)
-        number2 = Number(shadow2.innerText)    
-        operate(sign)    
-    }
-    else if (sign === ''){
-    screen1.append(numPad9.innerText)
-    shadow1.append(numPad9.innerText)
-    number1 = Number(shadow1.innerText)
-}})
-
-//clear button
-clear.addEventListener('click', function(){
-    screen1.textContent = ''
-    screen2.textContent = ''
-    shadow1.textContent = ''
-    shadow2.textContent = ''
-    number1 = 0
-    number2 = 0
-    result = 0
-    sign = ''
-})
-
-
-//operation button
-add.addEventListener('click', function(){
-    // if (sign != ''){
-    //     screen1.append(' + ')    
-    //     operate(sign)
-    //     shadow1.textContent = ''
-    //     shadow2.textContent = ''
-    //     screen1.textContent = result
-    //     sign = ''
-    //     number1 = result
-    //     number2 = 0
-    //     result = 0    
-    // }
-    // else {
-        sign = '+'
-        screen1.append(' + ')    
-    // }
-})
-
-subtract.addEventListener('click', function(){
-    sign = '-'
-    screen1.append(' - ')
-})
-
-multiply.addEventListener('click', function(){
-    sign = '*'
-    screen1.append(' X ')
-})
-divide.addEventListener('click', function(){
-    sign = '/'
-    screen1.append(' / ')
-})
-equal.addEventListener('click', function(){
-    shadow1.textContent = ''
-    shadow2.textContent = ''
-    screen1.textContent = result
-    sign = ''
-    number1 = result
-    number2 = 0
-    result = 0
-
-})
+}
